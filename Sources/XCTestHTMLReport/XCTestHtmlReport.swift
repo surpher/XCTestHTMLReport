@@ -142,7 +142,7 @@ struct XCTestHtmlReport: ParsableCommand {
                     includeRunDestinationInfo: !junitOptions
                         .excludeRunDestinationInfo
                 )
-            let junitPath = path.addPathComponent("report.junit")
+            let junitPath = path.addPathComponent("report.xml")
             Logger.substep("Writing JUnit report to \(junitPath)")
 
             do {

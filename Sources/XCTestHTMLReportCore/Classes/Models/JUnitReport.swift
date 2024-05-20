@@ -109,7 +109,7 @@ extension JUnitReport.TestCase: XMLRepresentable {
             xml += "/>\n"
         } else {
             xml += ">\n"
-            xml += results.map(\.xmlString).joined(separator: "\n")
+            xml += results.map(\.xmlString).filter { $0 != "" }.joined(separator: "\n")
             xml += "\n  </testcase>\n"
         }
         return xml
@@ -132,6 +132,14 @@ extension JUnitReport.TestResult: XMLRepresentable {
         case .skipped:
             return "    <skipped />"
         case .unknown:
+            // Medibank customisation for linking Jira/Xray tags
+            let separator = "::"
+            if title.contains("Added attachment named 'test_key\(separator)"), let startRange = title.lastIndex(of: ":"), let lastIndex = title.lastIndex(of: "'") {
+                let testID = title[title.index(after: startRange)..<lastIndex]
+                print("🤖  \(testID)\n\n\(title)")
+                return "    <properties>\n      <property name=\"test_key\" value=\"\(testID)\">\n      </property>\n    </properties>"
+            }
+
             // falback to system-out. This is better than printing nothing
             return "    <system-out>\(title.stringByEscapingXMLChars)</system-out>"
         }
